@@ -1,20 +1,16 @@
 package main
 
-import (
-	"gonum.org/v1/gonum/mat"
-)
+import "fmt"
 
 type Ray struct {
-	Origin *mat.Dense
-	Dir    *mat.Dense
+	Origin *Vector
+	Dir    *Vector
 }
 
-func (r *Ray) PointAt(t float64) *mat.Dense {
-	scaledDir := mat.NewDense(3, 1, make([]float64, 3))
-	scaledDir.Scale(t, r.Dir)
+func (r *Ray) PointAt(t float64) *Vector {
+	return r.Dir.Multi(t).Add(r.Origin)
+}
 
-	res := mat.NewDense(3, 1, make([]float64, 3))
-	res.Add(r.Origin, scaledDir)
-
-	return res
+func (r *Ray) String() string {
+	return fmt.Sprintf("Origin: %v, Dir: %v", r.Origin, r.Dir)
 }
