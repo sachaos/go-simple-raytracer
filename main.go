@@ -20,21 +20,31 @@ func main() {
 	vup := NewVector(0, 0, 1)
 
 	c := NewCamera(lookFrom, lookAt, vup, 0.5, 1.0)
+	sphere := &Sphere{NewVector(0, 0.0, 0.2), 0.2}
 	look := lookAt.Sub(lookFrom)
 	fmt.Println(c)
 	for i := 0; i < height; i++ {
 		for j := 0; j < width; j++ {
 			ray := c.GetRay(float64(j) / float64(width), float64(i)/ float64(height))
-			look := math.Abs(Normalize(ray.Dir).InnerProduct(Normalize(look)))
-			unconcern := uint8(math.Pow(look, 32.0) * 255.0)
-			print(unconcern)
-			print(" ")
-			img.Set(j, height-i, color.RGBA{
-				unconcern,
-				unconcern,
-				unconcern,
-				255,
-			})
+			if sphere.Hit(ray) {
+				img.Set(j, height-i, color.RGBA{
+					255,
+					0,
+					0,
+					255,
+				})
+			} else {
+				look := math.Abs(Normalize(ray.Dir).InnerProduct(Normalize(look)))
+				unconcern := uint8(math.Pow(look, 32.0) * 255.0)
+				print(unconcern)
+				print(" ")
+				img.Set(j, height-i, color.RGBA{
+					unconcern,
+					unconcern,
+					unconcern,
+					255,
+				})
+			}
 		}
 		println()
 	}
