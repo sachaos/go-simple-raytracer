@@ -26,9 +26,15 @@ func main() {
 	for i := 0; i < height; i++ {
 		for j := 0; j < width; j++ {
 			ray := c.GetRay(float64(j) / float64(width), float64(i)/ float64(height))
-			if sphere.Hit(ray) {
+
+			pos := sphere.Position(ray)
+			if pos > 0 {
+				N := ray.PointAt(pos).Sub(sphere.center)
+				s := uint8(math.Abs(Normalize(N).InnerProduct(Normalize(sphere.center.Sub(c.pos)))) * 255)
+				print(s)
+				print(" ")
 				img.Set(j, height-i, color.RGBA{
-					255,
+					s,
 					0,
 					0,
 					255,
