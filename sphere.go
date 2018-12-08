@@ -5,6 +5,7 @@ import "math"
 type Sphere struct{
 	center *Vector
 	r float64
+	Material Material
 }
 
 func (s *Sphere)Position(ray *Ray) float64 {

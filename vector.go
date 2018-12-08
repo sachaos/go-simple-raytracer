@@ -26,6 +26,10 @@ func (v *Vector) Multi(a float64) *Vector {
 	return &Vector{v.x * a, v.y * a, v.z * a}
 }
 
+func (v *Vector) MultiPerElem(tv *Vector) *Vector {
+	return &Vector{v.x * tv.x, v.y * tv.y, v.z * tv.z}
+}
+
 func (v *Vector) InnerProduct(tv *Vector) float64 {
 	return v.x*tv.x + v.y*tv.y + v.z*tv.z
 }

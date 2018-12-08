@@ -13,6 +13,7 @@ type Hit struct {
 	T float64
 	P *Vector
 	N *Vector
+	Material Material
 }
 
 type ObjectList struct {
@@ -42,6 +43,7 @@ func (ol *ObjectList) Position(ray *Ray) *Hit {
 		T: minPosition,
 		P: P,
 		N: N,
+		Material: sphere.Material,
 	}
 }
 
@@ -59,8 +61,8 @@ func (s *Scene) background(ray *Ray) *Vector {
 func (s *Scene) color(ray *Ray) *Vector {
 	hit := s.objectList.Position(ray)
 	if hit != nil {
-		target := hit.P.Add(hit.N).Add(NewRandomVectorInUnitSphere())
-		return s.color(&Ray{Origin: hit.P, Dir:target.Sub(hit.P)}).Multi(0.5)
+		nextRay, albedo := hit.Material.Scatter(ray, hit)
+		return s.color(nextRay).MultiPerElem(albedo)
 	} else {
 		return s.background(ray)
 	}
@@ -73,8 +75,8 @@ func (s *Scene) Render() {
 		for j := 0; j < s.width; j++ {
 			c := &Vector{}
 			for k := 0; k < s.sampleCount; k++ {
-				u := (float64(j)+rand.Float64())/float64(s.width)
-				v := (float64(i)+rand.Float64())/float64(s.height)
+				u := (float64(j) + rand.Float64()) / float64(s.width)
+				v := (float64(i) + rand.Float64()) / float64(s.height)
 				ray := s.camera.GetRay(u, v)
 
 				c = c.Add(s.color(ray))
