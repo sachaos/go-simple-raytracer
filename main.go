@@ -10,8 +10,10 @@ func main() {
 	c := NewCamera(lookFrom, lookAt, vup, 0.5, 1.0)
 
 	sphere := &Sphere{NewVector(0, 0, 0.2), 0.2}
-ground := &Sphere{NewVector(0, 0, -3), 3}
-	scene := &Scene{height: height, width: width, camera: c, spheres: []*Sphere{sphere, ground}}
+	ground := &Sphere{NewVector(0, 0, -100), 100}
+
+	objectList := &ObjectList{spheres: []*Sphere{sphere, ground}}
+	scene := &Scene{height: height, width: width, camera: c, objectList: objectList}
 
 	scene.Render()
 }
