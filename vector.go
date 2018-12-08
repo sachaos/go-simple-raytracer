@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"math/rand"
 )
 
 type Vector struct {
@@ -53,3 +54,20 @@ func Len(v *Vector) float64 {
 func Normalize(v *Vector) *Vector {
 	return v.Multi(1.0 / Len(v))
 }
+
+func NewRandomVector() *Vector {
+	return &Vector{rand.Float64(), rand.Float64(), rand.Float64()}
+}
+
+func NewRandomVectorInUnitSphere() *Vector {
+	p := &Vector{}
+	vec := &Vector{1.0, 1.0, 1.0}
+	for {
+		p = NewRandomVector().Multi(2).Sub(vec)
+		if Len(p) < 1 {
+			break
+		}
+	}
+	return p
+}
+

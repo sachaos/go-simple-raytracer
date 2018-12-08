@@ -36,7 +36,7 @@ func (ol *ObjectList) Position(ray *Ray) *Hit {
 
 	sphere := ol.spheres[minIndex]
 	P := ray.PointAt(minPosition)
-	N := P.Sub(sphere.center)
+	N := Normalize(P.Sub(sphere.center))
 
 	return &Hit{
 		T: minPosition,
@@ -52,8 +52,18 @@ type Scene struct {
 	sampleCount   int
 }
 
-func (s Scene) background(ray *Ray) *Vector {
+func (s *Scene) background(ray *Ray) *Vector {
 	return &Vector{x: 255.0, y: 255.0, z: 255.0}
+}
+
+func (s *Scene) color(ray *Ray) *Vector {
+	hit := s.objectList.Position(ray)
+	if hit != nil {
+		target := hit.P.Add(hit.N).Add(NewRandomVectorInUnitSphere())
+		return s.color(&Ray{Origin: hit.P, Dir:target.Sub(hit.P)}).Multi(0.5)
+	} else {
+		return s.background(ray)
+	}
 }
 
 func (s *Scene) Render() {
@@ -67,13 +77,7 @@ func (s *Scene) Render() {
 				v := (float64(i)+rand.Float64())/float64(s.height)
 				ray := s.camera.GetRay(u, v)
 
-				hit := s.objectList.Position(ray)
-				if hit != nil {
-					red := math.Abs(Normalize(hit.N).InnerProduct(Normalize(hit.P.Sub(s.camera.pos)))) * 255
-					c = c.Add(&Vector{x: red})
-				} else {
-					c = c.Add(s.background(ray))
-				}
+				c = c.Add(s.color(ray))
 			}
 			println(c.String())
 			c = c.Multi(1.0 / float64(s.sampleCount))
