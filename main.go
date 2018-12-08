@@ -1,8 +1,8 @@
 package main
 
 func main() {
-	height := 200
-	width := 200
+	height := 400
+	width := 400
 
 	lookFrom := NewVector(-2, 0, 0.3)
 	lookAt := NewVector(2, 0, 0)

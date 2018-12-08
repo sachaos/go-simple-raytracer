@@ -79,7 +79,6 @@ func (s *Scene) Render() {
 
 				c = c.Add(s.color(ray))
 			}
-			println(c.String())
 			c = c.Multi(1.0 / float64(s.sampleCount))
 
 			img.Set(j, s.height-i, color.RGBA{
