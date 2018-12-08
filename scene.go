@@ -11,7 +11,7 @@ import (
 type Scene struct {
 	height, width int
 	camera *Camera
-	sphere *Sphere
+	spheres []*Sphere
 }
 
 func (s *Scene) Render()  {
@@ -21,13 +21,26 @@ func (s *Scene) Render()  {
 		for j := 0; j < s.width; j++ {
 			ray := s.camera.GetRay(float64(j) / float64(s.width), float64(i)/ float64(s.height))
 
-			pos := s.sphere.Position(ray)
-			if pos > 0 {
-				N := ray.PointAt(pos).Sub(s.sphere.center)
-				r := uint8(math.Abs(Normalize(N).InnerProduct(Normalize(s.sphere.center.Sub(s.camera.pos)))) * 255)
+			minIndex := -1
+			minPosition := math.MaxFloat64
+			for i, sphere := range s.spheres {
+				position := sphere.Position(ray)
+				if position > 0 && position < minPosition {
+					minIndex = i
+					minPosition = position
+				}
+			}
+
+			if minIndex >= 0 {
+				sphere := s.spheres[minIndex]
+				N := ray.PointAt(minPosition).Sub(sphere.center)
+				r := uint8(math.Abs(Normalize(N).InnerProduct(Normalize(sphere.center.Sub(s.camera.pos)))) * 255)
+				if minIndex == 1 {
+					println(r)
+				}
 				img.Set(j, s.height-i, color.RGBA{
 					r,
-					0,
+					r,
 					0,
 					255,
 				})
