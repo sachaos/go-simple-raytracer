@@ -13,7 +13,7 @@ func main() {
 	ground := &Sphere{NewVector(0, 0, -100), 100}
 
 	objectList := &ObjectList{spheres: []*Sphere{sphere, ground}}
-	scene := &Scene{height: height, width: width, camera: c, objectList: objectList}
+	scene := &Scene{sampleCount: 100, height: height, width: width, camera: c, objectList: objectList}
 
 	scene.Render()
 }
