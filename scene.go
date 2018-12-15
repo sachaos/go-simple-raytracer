@@ -7,6 +7,8 @@ import (
 	"math"
 	"math/rand"
 	"os"
+	"runtime"
+	"sync"
 )
 
 type Hit struct {
@@ -71,26 +73,40 @@ func (s *Scene) color(ray *Ray) *Vector {
 func (s *Scene) Render() {
 	img := image.NewRGBA(image.Rect(0, 0, s.width, s.height))
 
-	for i := 0; i < s.height; i++ {
-		for j := 0; j < s.width; j++ {
-			c := &Vector{}
-			for k := 0; k < s.sampleCount; k++ {
-				u := (float64(j) + rand.Float64()) / float64(s.width)
-				v := (float64(i) + rand.Float64()) / float64(s.height)
-				ray := s.camera.GetRay(u, v)
+	maxGoroutineNum :=2
+	runtime.GOMAXPROCS(maxGoroutineNum+1)
 
-				c = c.Add(s.color(ray))
+	var wg sync.WaitGroup
+	for goroutineNum := 0; goroutineNum < maxGoroutineNum; goroutineNum++ {
+		heightStart := goroutineNum * (s.height / maxGoroutineNum)
+		heightEnd := (goroutineNum + 1) * (s.height / maxGoroutineNum)
+		wg.Add(1)
+		go func() {
+			for i := heightStart; i < heightEnd; i++ {
+				for j := 0; j < s.width; j++ {
+					c := &Vector{}
+					for k := 0; k < s.sampleCount; k++ {
+						u := (float64(j) + rand.Float64()) / float64(s.width)
+						v := (float64(i) + rand.Float64()) / float64(s.height)
+						ray := s.camera.GetRay(u, v)
+
+						c = c.Add(s.color(ray))
+					}
+					c = c.Multi(1.0 / float64(s.sampleCount))
+
+					img.Set(j, s.height-i, color.RGBA{
+						uint8(c.x),
+						uint8(c.y),
+						uint8(c.z),
+						255,
+					})
+				}
 			}
-			c = c.Multi(1.0 / float64(s.sampleCount))
-
-			img.Set(j, s.height-i, color.RGBA{
-				uint8(c.x),
-				uint8(c.y),
-				uint8(c.z),
-				255,
-			})
-		}
+			wg.Done()
+		}()
 	}
+
+	wg.Wait()
 	f, err := os.OpenFile("out.png", os.O_WRONLY|os.O_CREATE, 0600)
 	if err != nil {
 		panic(err)
