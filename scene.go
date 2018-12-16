@@ -1,20 +1,21 @@
 package main
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"image/png"
 	"math"
 	"math/rand"
 	"os"
-	"runtime"
 	"sync"
+	"time"
 )
 
 type Hit struct {
-	T float64
-	P *Vector
-	N *Vector
+	T        float64
+	P        *Vector
+	N        *Vector
 	Material Material
 }
 
@@ -42,9 +43,9 @@ func (ol *ObjectList) Position(ray *Ray) *Hit {
 	N := Normalize(P.Sub(sphere.center))
 
 	return &Hit{
-		T: minPosition,
-		P: P,
-		N: N,
+		T:        minPosition,
+		P:        P,
+		N:        N,
 		Material: sphere.Material,
 	}
 }
@@ -73,15 +74,18 @@ func (s *Scene) color(ray *Ray) *Vector {
 func (s *Scene) Render() {
 	img := image.NewRGBA(image.Rect(0, 0, s.width, s.height))
 
-	maxGoroutineNum :=2
-	runtime.GOMAXPROCS(maxGoroutineNum+1)
+	maxGoroutineNum := 8
 
 	var wg sync.WaitGroup
 	for goroutineNum := 0; goroutineNum < maxGoroutineNum; goroutineNum++ {
 		heightStart := goroutineNum * (s.height / maxGoroutineNum)
 		heightEnd := (goroutineNum + 1) * (s.height / maxGoroutineNum)
 		wg.Add(1)
-		go func() {
+		go func(heightStart, heightEnd, num int) {
+			start := time.Now()
+			fmt.Printf("num %d start at: %s\n", num, start)
+			defer wg.Done()
+			defer func() { fmt.Printf("num %d end: %s\n", num, time.Now().Sub(start)) }()
 			for i := heightStart; i < heightEnd; i++ {
 				for j := 0; j < s.width; j++ {
 					c := &Vector{}
@@ -102,8 +106,7 @@ func (s *Scene) Render() {
 					})
 				}
 			}
-			wg.Done()
-		}()
+		}(heightStart, heightEnd, goroutineNum)
 	}
 
 	wg.Wait()
