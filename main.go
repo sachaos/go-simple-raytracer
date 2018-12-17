@@ -1,6 +1,9 @@
 package main
 
+import "github.com/pkg/profile"
+
 func main() {
+	defer profile.Start(profile.ProfilePath("."), profile.MutexProfile).Stop()
 	height := 750
 	width := 1000
 
