@@ -20,3 +20,8 @@ func (s *Sphere)Position(ray *Ray) float64 {
 
 	return (-b - math.Sqrt(D)) / (2 * a)
 }
+
+func (s *Sphere) IsConflict(xs *Sphere) bool {
+	d := Len(s.center.Sub(xs.center))
+	return d < (s.r + xs.r)
+}
