@@ -4,8 +4,8 @@ func main() {
 	height := 750
 	width := 1000
 
-	lookFrom := NewVector(-2, 0, 0.3)
-	lookAt := NewVector(2, 0, 0)
+	lookFrom := NewVector(-2, 0, 0.5)
+	lookAt := NewVector(0, 0, 0.25)
 	vup := NewVector(0, 0, 1)
 	c := NewCamera(lookFrom, lookAt, vup, 0.5, 1.5)
 
