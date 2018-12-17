@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
-	"math/rand"
+	"github.com/mono0x/prand"
 )
 
 type Vector struct {
@@ -60,7 +60,7 @@ func Normalize(v *Vector) *Vector {
 }
 
 func NewRandomVector() *Vector {
-	return &Vector{rand.Float64(), rand.Float64(), rand.Float64()}
+	return &Vector{prand.Float64(), prand.Float64(), prand.Float64()}
 }
 
 func NewRandomVectorInUnitSphere() *Vector {

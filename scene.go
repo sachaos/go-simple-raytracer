@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
+	"github.com/mono0x/prand"
 	"image"
 	"image/color"
 	"image/png"
 	"math"
-	"math/rand"
 	"os"
 	"sync"
 	"time"
@@ -90,8 +90,8 @@ func (s *Scene) Render() {
 				for j := 0; j < s.width; j++ {
 					c := &Vector{}
 					for k := 0; k < s.sampleCount; k++ {
-						u := (float64(j) + rand.Float64()) / float64(s.width)
-						v := (float64(i) + rand.Float64()) / float64(s.height)
+						u := (float64(j) + prand.Float64()) / float64(s.width)
+						v := (float64(i) + prand.Float64()) / float64(s.height)
 						ray := s.camera.GetRay(u, v)
 
 						c = c.Add(s.color(ray))
