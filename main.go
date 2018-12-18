@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/pkg/profile"
 	"math/rand"
 	"time"
 )
@@ -35,7 +34,6 @@ func genSphere(currentSpheres []*Sphere) *Sphere {
 }
 
 func main() {
-	defer profile.Start(profile.ProfilePath("."), profile.MutexProfile).Stop()
 	rand.Seed(time.Now().UnixNano())
 
 	height := 750
