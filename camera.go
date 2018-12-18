@@ -24,9 +24,6 @@ func NewCamera(lookfrom, lookat, vup *Vector, vfov, aspect float64) *Camera {
 	horizontal := u.Multi(2.0 * halfWidth)
 	vertical := v.Multi(2.0 * halfHeight)
 
-	println(horizontal.String())
-	println(vertical.String())
-
 	return &Camera{
 		pos, u, v, w,
 		lowerLeft, horizontal, vertical,
