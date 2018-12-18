@@ -58,7 +58,7 @@ func main() {
 	spheres = append(spheres, ground)
 
 	objectList := &ObjectList{spheres: spheres}
-	scene := &Scene{sampleCount: 5, height: height, width: width, camera: c, objectList: objectList}
+	scene := &Scene{sampleCount: 100, height: height, width: width, camera: c, objectList: objectList}
 
 	scene.Render()
 }
